@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/{id:int?}"
 @model Zbranca_Iulian_ProiectMedii.Pages.Albume.IndexModel
 
 @{
@@ -28,11 +28,23 @@
             <th>
                 @Html.DisplayNameFor(model => model.Album[0].Artist.NumeArtist)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Album[0].CategorieAlbum)
+            </th>
+
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Album) {
-        <tr>
+
+        @foreach (var item in Model.AlbumD.Album)
+        {
+            string selectedRow = "";
+            if (item.ID == Model.AlbumID)
+            {
+                selectedRow = "table-success";
+            }
+        <tr class="@selectedRow">
+
             <td>
                 @Html.DisplayFor(modelItem => item.Titlu)
             </td>
@@ -49,11 +61,19 @@
                 @Html.DisplayFor(modelItem => item.Artist.NumeArtist)
             </td>
             <td>
+                @{
+                    foreach (var category in item.CategorieAlbum)
+                    {
+                        @category.Categorie.NumeCategorie <br />
+                    }
+                }
+            </td>
+            <td>
                 <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
                 <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
                 <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>

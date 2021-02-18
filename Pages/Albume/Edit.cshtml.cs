@@ -11,7 +11,7 @@ using Zbranca_Iulian_ProiectMedii.Models;
 
 namespace Zbranca_Iulian_ProiectMedii.Pages.Albume
 {
-    public class EditModel : PageModel
+    public class EditModel : AlbumCategoriesPageModel
     {
         private readonly Zbranca_Iulian_ProiectMedii.Data.Zbranca_Iulian_ProiectMediiContext _context;
 
@@ -30,51 +30,56 @@ namespace Zbranca_Iulian_ProiectMedii.Pages.Albume
                 return NotFound();
             }
 
-            Album = await _context.Album.FirstOrDefaultAsync(m => m.ID == id);
+            Album = await _context.Album
+                 .Include(b => b.Label)
+                 .Include(b => b.CategorieAlbum).ThenInclude(b => b.Categorie)
+                 .AsNoTracking()
+                 .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Album == null)
             {
                 return NotFound();
             }
 
+            PopulateAssignedCategoryData(_context, Album);
+
+
             ViewData["LabelID"] = new SelectList(_context.Set<Zbranca_Iulian_ProiectMedii.Models.Label>(), "ID", "NumeLabel");
             ViewData["ArtistID"] = new SelectList(_context.Set<Zbranca_Iulian_ProiectMedii.Models.Artist>(), "ID", "NumeArtist");
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id, string[]
+            selectedCategories)
         {
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return Page();
+                return NotFound();
             }
-
-            _context.Attach(Album).State = EntityState.Modified;
-
-            try
+            var AlbumToUpdate = await _context.Album
+            .Include(i => i.Label)
+            .Include(i => i.CategorieAlbum)
+            .ThenInclude(i => i.Categorie)
+            .FirstOrDefaultAsync(s => s.ID == id);
+            if (AlbumToUpdate == null)
             {
+                return NotFound();
+            }
+            if (await TryUpdateModelAsync<Album>(
+            AlbumToUpdate,
+            "Album",
+            i => i.Titlu, i => i.Artist,
+            i => i.Pret, i => i.DataAparitiei, i => i.Label))
+            {
+                UpdateCategorieAlbum(_context, selectedCategories, AlbumToUpdate);
                 await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AlbumExists(Album.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return RedirectToPage("./Index");
-        }
-
-        private bool AlbumExists(int id)
-        {
-            return _context.Album.Any(e => e.ID == id);
+            UpdateCategorieAlbum(_context, selectedCategories, AlbumToUpdate);
+            PopulateAssignedCategoryData(_context, AlbumToUpdate);
+            return Page();
         }
     }
+
+
 }

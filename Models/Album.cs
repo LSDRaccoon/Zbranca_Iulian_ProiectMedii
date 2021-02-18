@@ -25,5 +25,7 @@ namespace Zbranca_Iulian_ProiectMedii.Models
         public int LabelID { get; set; }
         public Label Label { get; set; }
 
+        public ICollection<CategorieAlbum> CategorieAlbum { get; set; }
+
     }
 }

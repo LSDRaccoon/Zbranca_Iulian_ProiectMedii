@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zbranca_Iulian_ProiectMedii.Data;
 
 namespace Zbranca_Iulian_ProiectMedii.Migrations
 {
     [DbContext(typeof(Zbranca_Iulian_ProiectMediiContext))]
-    partial class Zbranca_Iulian_ProiectMediiContextModelSnapshot : ModelSnapshot
+    [Migration("20210217105853_CategorieAlbum")]
+    partial class CategorieAlbum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

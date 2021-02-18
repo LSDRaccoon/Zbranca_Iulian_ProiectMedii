@@ -19,5 +19,7 @@ namespace Zbranca_Iulian_ProiectMedii.Data
         public DbSet<Zbranca_Iulian_ProiectMedii.Models.Label> Label { get; set; }
 
         public DbSet<Zbranca_Iulian_ProiectMedii.Models.Artist> Artist { get; set; }
+
+        public DbSet<Zbranca_Iulian_ProiectMedii.Models.Categorie> Categorie { get; set; }
     }
 }
